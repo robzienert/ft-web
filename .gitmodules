@@ -1,0 +1,9 @@
+[submodule "vendor/swiftmailer"]
+	path = vendor/swiftmailer
+	url = git://github.com/swiftmailer/swiftmailer.git
+[submodule "vendor/predis"]
+	path = vendor/predis
+	url = git://github.com/nrk/predis.git
+[submodule "vendor/silex-extensions"]
+	path = vendor/silex-extensions
+	url = git://github.com/fate/Silex-Extensions.git
