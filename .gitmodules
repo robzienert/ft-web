@@ -7,3 +7,6 @@
 [submodule "vendor/silex-extensions"]
 	path = vendor/silex-extensions
 	url = git://github.com/fate/Silex-Extensions.git
+[submodule "vendor/twig"]
+	path = vendor/twig
+	url = git://github.com/fabpot/Twig.git

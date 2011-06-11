@@ -1,0 +1,262 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, title, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+body {
+	line-height: 1;
+	color: black;
+	background: white;
+}
+ol, ul {
+	list-style: none;
+}
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+title, th, td {
+	text-align: left;
+	font-weight: normal;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: "";
+}
+blockquote, q {
+	quotes: "" "";
+}
+
+
+body {
+	color: #333;
+	
+	background: url('/img/body_bg.png') repeat-x;
+	font-family: Arial, Helvetica, sans-serif;
+	line-height: 200%;
+	
+}
+
+h1 {
+	
+	background: url('/img/header.png') no-repeat;
+	height: 246px;
+	text-indent: -9999px;
+	
+}
+
+#mast p {
+	
+	display: none;
+	
+}
+
+#fuckups {
+	
+	background-color: #F8F8F8;
+		
+}
+
+#fuckups p {
+
+	background: #fff;
+	font-size: 200%;
+	padding: 10px 20px;
+	margin-bottom: 40px;
+	border-top: 1px solid #E5E285;
+	border-bottom: 1px solid #E5E285;
+	line-height: 120%;
+	
+}
+
+#fuckups  p .name {
+	
+	font-weight: bold;
+	color: #000;
+	background: url('/img/zapz.png') no-repeat top right ;
+	padding-right: 24px;
+	
+}
+
+#content {
+	
+	width: 860px;
+	padding: 20px 20px;
+	
+}
+
+#add_form {
+	
+	display: none;
+	
+}
+
+#add_form dt {
+	
+	display: none;
+	
+}
+
+#add_form input,
+#add_from select {
+	
+	font-size: 100%;
+	font-weight: bold;
+	color: #333;
+	
+}
+
+#custom_verb {
+	
+	display: none;
+	
+}
+
+#verb {
+		
+}
+
+#cancel_custom {
+	
+	color: #333;
+	background: url('/img/bullet_arrow_bottom.png') no-repeat  0px 1px;
+	font-size: 75%;
+	padding: 2px 0 0  15px;
+	position: absolute;
+	display: none;
+	
+}
+
+#add_form  #who_wrap {
+	
+	float: left;	
+	padding-right: 10px;
+	width: 300px;
+	
+}
+
+#add_form  #who_wrap input {
+	
+
+	width: 300px;
+	font-size: 140%;	
+}
+
+#add_form #verb_wrap {
+	
+	float: left;
+	
+}
+
+#add_form #verb_wrap strong{
+	
+	font-size: 140%;
+	font-weight: bold;
+	color: #000;
+	background: url('/img/zapz.png') no-repeat top right ;
+	padding-right: 24px;
+	padding-left: 5px;
+	
+}
+
+#add_form #fuckup_wrap {
+	
+	clear: both;
+	
+}
+
+#add_form #fuckup_wrap dt {
+	
+	display: block;
+	
+}
+
+#add {
+	
+	line-height: 150%;
+	
+}
+
+#add a {
+	
+	font-weight: bold;
+	font-size: 200%;
+	line-height: 120%;
+	color: #66FF0D;
+	background: #333;
+	padding: 2px 4px;
+	text-decoration: none;
+	
+}
+
+#add a:hover {
+	
+	text-decoration: underline;
+	
+}
+
+form {
+	
+	padding-left: 20px;
+	background: #F1FFE9;
+	
+}
+
+form dt {
+	
+	padding-top: 10px;
+	padding-bottom: 5px;
+	
+}
+form dd {
+	
+	padding-bottom: 10px;
+	
+}
+
+form input {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+textarea{
+ 	padding: 5px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 89%;
+	height: 100px;
+	width: 500px;
+	
+}
+
+
+.fucker {
+    
+    color: #333 !important;
+    
+}
+
+.timestamp {
+	
+	display: block;
+	font-size: 40%;
+	color: #999;
+	line-height: 100%;
+	
+}
