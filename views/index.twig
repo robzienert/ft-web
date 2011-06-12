@@ -61,6 +61,17 @@
         <p>Ahh... we're in fucktown. No fuckups found!</p>
         {% endfor %}
     </div>
+    {% if paginate %}
+    <ul class="pagination">
+        {% for page in 1..pagination.pages %}
+            {% if pagination.current == page %}
+            <li>{{ page }}</li>
+            {% else %}
+            <li><a href="/{{ page }}">{{ page }}</a></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    {% endif %}
 </div>
 <div id="footer">
     <a href="https://github.com/robzienert/InFucktown">GitHub</a>

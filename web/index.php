@@ -87,9 +87,18 @@ $app->get('/feed', function () use ($app) {
  * Homepage
  */
 $app->get('/{page}', function ($page = 1) use ($app) {
-    $fuckups = ft_find_fuckups($app, $page);
+    $pages = ft_count_pages($app);
 
-    return $app['twig']->render('index.twig', array('fuckups' => $fuckups));
+    $paginate = (int) $pages - 1;
+
+    return $app['twig']->render('index.twig', array(
+        'fuckups' => ft_find_fuckups($app, $page),
+        'pagination' => array(
+            'pages' => $pages,
+            'current' => $page,
+        ),
+        'paginate' => $pages - 1,
+    ));
 })->value('page', 1)->bind('home');
 
 /**
@@ -145,8 +154,8 @@ $app->run();
 function ft_find_fuckups($app, $page = 1) {
     $fuckups = array();
 
-    $rangeStart = ($page - 1) * 10;
-    $rangeEnd = ($page * 10) + 9;
+    $rangeStart = ($page - 1) * 5;
+    $rangeEnd = ($page * 5) + 5;
 
     foreach ($app['predis']->lrange('global:fuckups', $rangeStart, $rangeEnd) as $fuckupId) {
         $fuckup = $app['predis']->get("fuckup:$fuckupId");
@@ -157,4 +166,26 @@ function ft_find_fuckups($app, $page = 1) {
     }
 
     return $fuckups;
+}
+
+/**
+ * Returns the total number of fuckups in the database.
+ *
+ * @param \Silex\Application $app
+ * @return int
+ */
+function ft_count_fuckups($app)
+{
+    return $app['predis']->get('global:nextEntryId') - 1;
+}
+
+/**
+ * Returns the total number of pages of fuckups in the database.
+ *
+ * @param \Silex\Application $app
+ * @return int
+ */
+function ft_count_pages($app)
+{
+    return ceil(ft_count_fuckups($app) / 5);
 }

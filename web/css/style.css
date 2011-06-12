@@ -266,3 +266,15 @@ textarea{
     font-size: 11px;
     color: #888;
 }
+
+.pagination li {
+    font-size: 12px;
+    display: inline;
+    list-style: none;
+    margin: 5px;
+}
+
+.pagination li a {
+    border: 1px #ccc solid;
+    padding: 5px;
+}
