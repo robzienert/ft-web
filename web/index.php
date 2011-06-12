@@ -104,6 +104,9 @@ $app->post('/new', function () use ($app) {
         ? $request->get('custom_verb')
         : $request->get('verb');
 
+    $fuckup = $app->escape($request->get('fuckup'));
+    $fuckup = preg_replace('/^because[ ]?/', '', $fuckup);
+
     $entry = array(
         'time' => date(DateTime::RSS),
         'who' => $app->escape($request->get('who')),
@@ -120,6 +123,8 @@ $app->post('/new', function () use ($app) {
 });
 
 if ('development' != APP_ENV) {
+    // @todo log errors
+    // @todo make the error page prettier.
     $app->error(function (\Exception $e) {
         if ($e instanceof NotFoundHttpException) {
             return new Response('The requested page could not be found.', 404);
