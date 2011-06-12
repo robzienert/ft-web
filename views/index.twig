@@ -54,8 +54,8 @@
         {% for fuckup in fuckups %}
         <p><span class="name"><span class="fucker">{{ fuckup.who }}</span>
             {{ fuckup.verb }} in FUCKTOWN</span>
-            because {{ fuckup.fuckup }}
-                    <span class="timestamp">{{ fuckup.time }}</span>
+            {{ fuckup.fuckup }}
+            <span class="timestamp">{{ fuckup.time }}</span>
         </p>
         {% else %}
         <p>Ahh... we're in fucktown. No fuckups found!</p>
