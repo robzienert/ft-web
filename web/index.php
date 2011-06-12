@@ -9,10 +9,6 @@ defined('APP_ENV') || define('APP_ENV', (getenv('APP_ENV') ?: 'production'));
 
 require_once ROOT_PATH . '/silex.phar';
 
-//function id($object) {
-//    return new $object;
-//}
-
 /**
  * Bootstrapping
  */
@@ -37,20 +33,12 @@ $app->register(new SilexExtension\PredisExtension(), array(
 
 /**
  * Homepage
- *
- * @todo How do I handle optional arguments?
  */
-$app->get('/', function () use ($app) {
-    $fuckups = ft_find_fuckups($app);
-
-    return $app['twig']->render('index.twig', array('fuckups' => $fuckups));
-
-});
 $app->get('/{page}', function ($page = 1) use ($app) {
-    $fuckups = ft_find_fuckups($app);
+    $fuckups = ft_find_fuckups($app, $page);
 
     return $app['twig']->render('index.twig', array('fuckups' => $fuckups));
-});
+})->value('page', 1)->bind('home');
 
 /**
  * Add a new fuckup to the site.
@@ -64,13 +52,13 @@ $app->post('/new', function () use ($app) {
         ? $request->get('custom_verb')
         : $request->get('verb');
 
-    // @todo Add data sanitization
     $entry = array(
-        'time' => date(DateTime::ISO8601),
-        'who' => $request->get('who'),
-        'verb' => $verb,
-        'fuckup' => $request->get('fuckup')
+        'time' => date(DateTime::RSS),
+        'who' => $app->escape($request->get('who')),
+        'verb' => $app->escape($verb),
+        'fuckup' => $app->escape($request->get('fuckup'))
     );
+
     $app['predis']->set("fuckup:$entryId", json_encode($entry));
 
     $app['predis']->lpush('global:fuckups', $entryId);
@@ -118,6 +106,7 @@ function ft_find_fuckups($app, $page = 1) {
     foreach ($app['predis']->lrange('global:fuckups', $rangeStart, $rangeEnd) as $fuckupId) {
         $fuckup = $app['predis']->get("fuckup:$fuckupId");
         $fuckup = json_decode($fuckup);
+        $fuckup->id = $fuckupId;
 
         array_push($fuckups, $fuckup);
     }
