@@ -162,8 +162,8 @@ $app->run();
 function ft_find_fuckups($app, $page = 1) {
     $fuckups = array();
 
-    $rangeStart = ($page - 1) * 5;
-    $rangeEnd = ($page * 5) + 5;
+    $rangeStart = ($page - 1) * 10;
+    $rangeEnd = ($page * 10) - 1;
 
     foreach ($app['predis']->lrange('global:fuckups', $rangeStart, $rangeEnd) as $fuckupId) {
         $fuckup = $app['predis']->get("fuckup:$fuckupId");
