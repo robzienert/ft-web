@@ -13,6 +13,11 @@
 </div>
 
 <div id="content">
+    {% if message %}
+        <div class="message">
+            <p>{{ message }}</p>
+        </div>
+    {% endif %}
     <p id="add"><a href="#" title="Add a FUCKTOWNer">Add a FUCKTOWNER</a></p>
 
     <div id="add_form" style="display: none;">

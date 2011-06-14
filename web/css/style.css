@@ -56,27 +56,20 @@ body {
 }
 
 h1 {
-
 	background: url('/img/header.png') no-repeat;
 	height: 246px;
 	text-indent: -9999px;
-
 }
 
 #mast p {
-
 	display: none;
-
 }
 
 #fuckups {
-
 	background-color: #F8F8F8;
-
 }
 
 #fuckups p {
-
 	background: #fff;
 	font-size: 200%;
 	padding: 10px 20px;
@@ -84,119 +77,87 @@ h1 {
 	border-top: 1px solid #E5E285;
 	border-bottom: 1px solid #E5E285;
 	line-height: 120%;
-
 }
 
-#fuckups  p .name {
-
+#fuckups p .name {
 	font-weight: bold;
 	color: #000;
 	background: url('/img/zapz.png') no-repeat top right ;
 	padding-right: 24px;
-
 }
 
 #content {
-
 	width: 860px;
 	padding: 20px 20px;
-
 }
 
 #add_form {
-
 	display: none;
-
 }
 
 #add_form dt {
-
 	display: none;
-
 }
 
 #add_form input,
 #add_from select {
-
 	font-size: 100%;
 	font-weight: bold;
 	color: #333;
-
 }
 
 #custom_verb {
-
 	display: none;
-
-}
-
-#verb {
-
 }
 
 #cancel_custom {
-
 	color: #333;
 	background: url('/img/bullet_arrow_bottom.png') no-repeat  0px 1px;
 	font-size: 75%;
 	padding: 2px 0 0  15px;
 	position: absolute;
 	display: none;
-
 }
 
-#add_form  #who_wrap {
-
+#who_wrap {
 	float: left;
 	padding-right: 10px;
 	width: 300px;
-
 }
 
-#add_form  #who_wrap input {
-
-
+#who_wrap input {
 	width: 300px;
 	font-size: 140%;
 }
 
-#add_form #verb_wrap {
+#verb_wrap {
 
 	float: left;
 
 }
 
-#add_form #verb_wrap strong{
-
+#verb_wrap strong{
 	font-size: 140%;
 	font-weight: bold;
 	color: #000;
 	background: url('/img/zapz.png') no-repeat top right ;
 	padding-right: 24px;
 	padding-left: 5px;
-
 }
 
-#add_form #fuckup_wrap {
-
+#fuckup_wrap {
 	clear: both;
-
 }
 
-#add_form #fuckup_wrap dt {
-
+#fuckup_wrap dt {
 	display: block;
-
 }
 
 #add {
-
 	line-height: 150%;
-
 }
 
 #add a {
-
 	font-weight: bold;
 	font-size: 200%;
 	line-height: 120%;
@@ -204,32 +165,24 @@ h1 {
 	background: #333;
 	padding: 2px 4px;
 	text-decoration: none;
-
 }
 
 #add a:hover {
-
 	text-decoration: underline;
-
 }
 
 form {
-
 	padding-left: 20px;
 	background: #F1FFE9;
-
 }
 
 form dt {
-
 	padding-top: 10px;
 	padding-bottom: 5px;
 
 }
 form dd {
-
 	padding-bottom: 10px;
-
 }
 
 form input {
@@ -242,23 +195,17 @@ textarea{
 	font-size: 89%;
 	height: 100px;
 	width: 500px;
-
 }
 
-
 .fucker {
-
     color: #333 !important;
-
 }
 
 .timestamp {
-
 	display: block;
 	font-size: 40%;
 	color: #999;
 	line-height: 100%;
-
 }
 
 #footer {
@@ -277,4 +224,12 @@ textarea{
 .pagination li a {
     border: 1px #ccc solid;
     padding: 5px;
+}
+
+.message {
+    border: 2px #333 solid;
+    background-color: #ffff33;
+    color: #333;
+    margin: 20px 0 20px 0;
+    padding: 10px;
 }

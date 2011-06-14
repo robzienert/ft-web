@@ -93,11 +93,12 @@ $app->get('/{page}', function ($page = 1) use ($app) {
 
     return $app['twig']->render('index.twig', array(
         'fuckups' => ft_find_fuckups($app, $page),
+        'message' => ft_get_flash_message($app['request']->query->get('msg')),
         'pagination' => array(
             'pages' => $pages,
             'current' => $page,
         ),
-        'paginate' => $pages - 1,
+        'paginate' => $pages - 1
     ));
 })->value('page', 1)->bind('home');
 
@@ -106,8 +107,6 @@ $app->get('/{page}', function ($page = 1) use ($app) {
  */
 $app->post('/new', function () use ($app) {
     $request = $app['request'];
-
-    $entryId = $app['predis']->incr('global:nextEntryId');
 
     $verb = ($request->get('verb') == 'custom')
         ? $request->get('custom_verb')
@@ -120,12 +119,21 @@ $app->post('/new', function () use ($app) {
         'fuckup' => $app->escape($request->get('fuckup'))
     );
 
-    $app['predis']->set("fuckup:$entryId", json_encode($entry));
+    if (!empty($entry['who']) && !empty($entry['fuckup'])) {
+        $entryId = $app['predis']->incr('global:nextEntryId');
 
-    $app['predis']->lpush('global:fuckups', $entryId);
-    $app['predis']->ltrim('global:fuckups', 0, 1000);
+        $app['predis']->set("fuckup:$entryId", json_encode($entry));
 
-    return new Symfony\Component\HttpFoundation\RedirectResponse('/');
+        $app['predis']->lpush('global:fuckups', $entryId);
+        $app['predis']->ltrim('global:fuckups', 0, 1000);
+
+        $redirect = '/';
+    } else {
+        $redirect = '/?msg=invalidFuckup';
+    }
+
+    return new Symfony\Component\HttpFoundation\RedirectResponse($redirect);
+
 });
 
 if ('development' != APP_ENV) {
@@ -188,4 +196,22 @@ function ft_count_fuckups($app)
 function ft_count_pages($app)
 {
     return ceil(ft_count_fuckups($app) / 5);
+}
+
+/**
+ * Get a fuckup flash message.
+ *
+ * @param string $key
+ * @return string
+ */
+function ft_get_flash_message($key)
+{
+    $message = false;
+
+    if ('invalidFuckup' == $key) {
+        $message = 'You submitted an invalid fuckup. If you weren\'t already
+            posting about yourself, you may as well do so now.';
+    }
+
+    return $message;
 }
