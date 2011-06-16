@@ -1,0 +1,4 @@
+<?php
+
+define('FT_TWITTER_KEY', '');
+define('FT_TWITTER_SECRET', '');

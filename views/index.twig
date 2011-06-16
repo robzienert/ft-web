@@ -1,123 +1,63 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<!-- saved from url=(0064)http://web.archive.org/web/20090609233357/http://infucktown.com/ -->
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="language" content="en" />
-    <title>In Fucktown</title>
-    <link href="{{ app.request.hostname }}/feed" rel="alternate" type="application/rss+xml" title="INFUCKTOWN rss feed" />
-    <link rel="stylesheet" href="/css/style.css" type="text/css" media="screen, projection" />
-</head>
-<body>
-<div id="mast">
-    <h1>Welcome to Fucktown</h1>
-    <p>Holy shit dude.</p>
+{% extends "layout.twig" %}
+
+{% block content %}
+<p id="add"><a href="#" title="Add a FUCKTOWNer">Add a FUCKTOWNER</a></p>
+
+<div id="add_form" style="display: none;">
+    <form action="/new" method="post">
+        <fieldset>
+            <legend>Who's in FUCKTOWN?</legend>
+            <dl id="who_wrap">
+                <dt><label for="who">Who's in FUCKTOWN?</label></dt>
+                <dd><input type="text" name="who" id="who" value=""></dd>
+            </dl>
+            <dl id="verb_wrap">
+                <dt><label for="verb">Why are they here?</label></dt>
+                <dd><select name="verb" id="verb">
+                    <option value="is" label="is">is</option>
+                    <option value="could be" label="could be">could be</option>
+                    <option value="should be" label="should be">should be</option>
+                    <option value="wants to be" label="wants to be">wants to be</option>
+                    <option value="was" label="was">was</option>
+                    <option value="will be" label="will be">will be</option>
+                    <option value="would be" label="would be">would be</option>
+                    <option value="custom" label="custom...">custom...</option>
+                </select>
+                <input type="text" name="custom_verb" id="custom_verb" value=""> <strong>IN FUCKTOWN</strong>
+                <p><a id="cancel_custom" href="#">options</a></p></dd>
+            </dl>
+            <dl id="fuckup_wrap">
+                <dt><label for="fuckup">Why are they here?</label></dt>
+                <dd><textarea name="fuckup" id="fuckup" rows="24" cols="80"></textarea></dd>
+            </dl>
+
+            <dl class="form_controls">
+                <dt><label for="submit">Submit</label></dt>
+                <dd><input type="submit" name="submit" id="submit" value="submit"></dd>
+            </dl>
+        </fieldset>
+    </form>
 </div>
-
-<div id="content">
-    {% if message %}
-        <div class="message">
-            <p>{{ message }}</p>
-        </div>
-    {% endif %}
-    <p id="add"><a href="#" title="Add a FUCKTOWNer">Add a FUCKTOWNER</a></p>
-
-    <div id="add_form" style="display: none;">
-        <form action="/new" method="post">
-            <fieldset>
-                <legend>Who's in FUCKTOWN?</legend>
-                <dl id="who_wrap">
-                    <dt><label for="who">Who's in FUCKTOWN?</label></dt>
-                    <dd><input type="text" name="who" id="who" value=""></dd>
-                </dl>
-                <dl id="verb_wrap">
-                    <dt><label for="verb">Why are they here?</label></dt>
-                    <dd><select name="verb" id="verb">
-                        <option value="is" label="is">is</option>
-                        <option value="could be" label="could be">could be</option>
-                        <option value="should be" label="should be">should be</option>
-                        <option value="wants to be" label="wants to be">wants to be</option>
-                        <option value="was" label="was">was</option>
-                        <option value="will be" label="will be">will be</option>
-                        <option value="would be" label="would be">would be</option>
-                        <option value="custom" label="custom...">custom...</option>
-                    </select>
-                    <input type="text" name="custom_verb" id="custom_verb" value=""> <strong>IN FUCKTOWN</strong>
-                    <p><a id="cancel_custom" href="#">options</a></p></dd>
-                </dl>
-                <dl id="fuckup_wrap">
-                    <dt><label for="fuckup">Why are they here?</label></dt>
-                    <dd><textarea name="fuckup" id="fuckup" rows="24" cols="80"></textarea></dd>
-                </dl>
-
-                <dl class="form_controls">
-                    <dt><label for="submit">Submit</label></dt>
-                    <dd><input type="submit" name="submit" id="submit" value="submit"></dd>
-                </dl>
-            </fieldset>
-        </form>
-    </div>
-    <div id="fuckups">
-        {% for fuckup in fuckups %}
-        <p><span class="name"><span class="fucker">{{ fuckup.who }}</span>
-            {{ fuckup.verb }} in FUCKTOWN</span>
-            {{ fuckup.fuckup }}
-            <span class="timestamp">{{ fuckup.time }}</span>
-        </p>
+<div id="fuckups">
+    {% for fuckup in fuckups %}
+    <p><a class="fuckup" href="/view/{{ fuckup.id }}"><span class="name"><span class="fucker">{{ fuckup.who }}</span>
+        {{ fuckup.verb }} in FUCKTOWN</span>
+        {{ fuckup.fuckup }}</a>
+        <span class="meta">{{ fuckup.time }} | <a href="/view/{{ fuckup.id }}/retweet" rel="nofollow">Retweet</a></span>
+    </p>
+    {% else %}
+    <p>Ahh... we're in fucktown. No fuckups found!</p>
+    {% endfor %}
+</div>
+{% if paginate %}
+<ul class="pagination">
+    {% for page in 1..pagination.pages %}
+        {% if pagination.current == page %}
+        <li>{{ page }}</li>
         {% else %}
-        <p>Ahh... we're in fucktown. No fuckups found!</p>
-        {% endfor %}
-    </div>
-    {% if paginate %}
-    <ul class="pagination">
-        {% for page in 1..pagination.pages %}
-            {% if pagination.current == page %}
-            <li>{{ page }}</li>
-            {% else %}
-            <li><a href="/{{ page }}">{{ page }}</a></li>
-            {% endif %}
-        {% endfor %}
-    </ul>
-    {% endif %}
-</div>
-<div id="footer">
-    <a href="https://github.com/robzienert/InFucktown">GitHub</a>
-</div>
-<script src="/js/jquery-1.2.6.min.js" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript" charset="utf-8">
-$(document).ready(function() {
-    $('#add a').click( function() {
-        $('#add_form').slideToggle();
-        return false;
-    });
-
-    $('#verb').change( function() {
-        if( $(this).val() == ($(this).children().length-1) ) {
-            $('#custom_verb').show();
-            $('#cancel_custom').show();
-            $(this).hide();
-        }
-    });
-
-    $('#cancel_custom').click( function() {
-        $('#verb').show();
-        $('#verb').val(0)
-        $('#custom_verb').hide();
-        $('#custom_verb').val("");
-        $(this).hide();
-        return false;
-    });
-});
-</script>
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-23923736-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-</body></html>
+        <li><a href="/{{ page }}">{{ page }}</a></li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

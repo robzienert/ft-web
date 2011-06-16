@@ -43,6 +43,83 @@ $app->register(new SilexExtension\PredisExtension(), array(
 ));
 
 /**
+ * View an individual fuckup.
+ */
+$app->get('/view/{id}', function ($id) use ($app) {
+    $fuckup = ft_find_fuckup($app, $id);
+
+    return $app['twig']->render('view.twig', array(
+        'fuckup' => $fuckup,
+    ));
+})->bind('view');
+
+/**
+ * LOLOL!!!1 Retweets a fuckup.
+ */
+$app->get('/view/{id}/retweet', function ($id) use ($app) {
+    session_start();
+
+    $fuckup = ft_find_fuckup($app, $id);
+
+    require ROOT_PATH . '/config.php';
+
+    $config = array(
+        'callbackUrl' => sprintf('http://%s/view/%d/retweet',
+            $app['request']->getHost(),
+            $id),
+        'siteUrl' => 'http://twitter.com/oauth',
+        'consumerKey' => FT_TWITTER_KEY,
+        'consumerSecret' => FT_TWITTER_SECRET,
+    );
+
+    require_once 'Zend/Oauth/Consumer.php';
+
+    $consumer = new Zend_Oauth_Consumer($config);
+
+    if (!isset($_SESSION['TWITTER_REQUEST_TOKEN'])
+        && !isset($_SESSION['TWITTER_ACCESS_TOKEN'])
+    ) {
+        $token = $consumer->getRequestToken();
+        $_SESSION['TWITTER_REQUEST_TOKEN'] = serialize($token);
+
+        $consumer->redirect();
+    } else if (!empty($_GET) && isset($_SESSION['TWITTER_REQUEST_TOKEN'])) {
+        $token = $consumer->getAccessToken(
+            $_GET,
+            unserialize($_SESSION['TWITTER_REQUEST_TOKEN']));
+
+        $_SESSION['TWITTER_ACCESS_TOKEN'] = serialize($token);
+        $_SESSION['TWITTER_REQUEST_TOKEN'] = null;
+    } else if (!isset($_SESSION['TWITTER_ACCESS_TOKEN'])) {
+        throw new \Exception('Twitter access token was not present in retweet.');
+    }
+
+    $thisPage = 'http://infucktown.robzienert.com/view/' . $id;
+
+    require_once 'Zend/Service/ShortUrl/TinyUrlCom.php';
+    $tinyurl = new Zend_Service_ShortUrl_TinyUrlCom();
+
+    // @todo Add support for making the "who" twitter-linkable.
+    $statusMessage = sprintf(
+        '%s %s in #FUCKTOWN %s %s',
+        $fuckup->who,
+        $fuckup->verb,
+        $fuckup->fuckup,
+        $tinyurl->shorten($thisPage));
+
+    $token = unserialize($_SESSION['TWITTER_ACCESS_TOKEN']);
+    $client = $token->getHttpClient($config);
+    $client->setUri('http://twitter.com/statuses/update.json');
+    $client->setMethod(Zend_Http_Client::POST);
+    $client->setParameterPost('status', $statusMessage);
+
+    $response = $client->request();
+
+    return new Symfony\Component\HttpFoundation\RedirectResponse(
+        $thisPage . '?msg=retweet');
+});
+
+/**
  * RSS feed
  */
 $app->get('/feed', function () use ($app) {
@@ -155,6 +232,8 @@ $app->run();
 /**
  * Get a list of fuckups.
  *
+ * @todo Add auto-pruning of ids in the list that do not reference a fuckup.
+ *
  * @param \Silex\Application $app
  * @param int $page
  * @return array
@@ -174,6 +253,26 @@ function ft_find_fuckups($app, $page = 1) {
     }
 
     return $fuckups;
+}
+
+/**
+ * Find a single fuckup.
+ *
+ * @param \Silex\Application $app
+ * @param int $id
+ */
+function ft_find_fuckup($app, $id)
+{
+    $fuckup = $app['predis']->get("fuckup:{$id}");
+
+    if (!$fuckup) {
+        throw new NotFoundHttpException('Could not find fuckup ' . $id);
+    }
+
+    $fuckup = json_decode($fuckup);
+    $fuckup->id = $id;
+
+    return $fuckup;
 }
 
 /**
@@ -206,11 +305,17 @@ function ft_count_pages($app)
  */
 function ft_get_flash_message($key)
 {
-    $message = false;
+    switch ($key) {
+        case 'invalidFuckup':
+            return 'You submitted an invalid fuckup. If you weren\'t already
+                posting about yourself, you may as well do so now.';
 
-    if ('invalidFuckup' == $key) {
-        $message = 'You submitted an invalid fuckup. If you weren\'t already
-            posting about yourself, you may as well do so now.';
+        case 'retweet':
+            return 'You have just brought more shame to this fuckup by
+                retweeting it. Well done.';
+
+        default:
+            return false;
     }
 
     return $message;

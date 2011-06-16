@@ -1,0 +1,12 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+<p><a href="/">&laquo; Back to other fuckups</a></p>
+<div id="fuckups">
+    <p><span class="name"><span class="fucker">{{ fuckup.who }}</span>
+        {{ fuckup.verb }} in FUCKTOWN</span>
+        {{ fuckup.fuckup }}
+        <span class="meta">{{ fuckup.time }} | <a href="/view/{{ fuckup.id }}/retweet" rel="nofollow">Retweet</a></span>
+    </p>
+</div>
+{% endblock %}
