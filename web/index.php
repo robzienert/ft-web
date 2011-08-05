@@ -146,7 +146,7 @@ $app->get('/feed', function () use ($app) {
     $feed->setFeedLink($host . '/feed', 'rss');
 
     foreach ($fuckups as $fuckup) {
-        $content = sprintf('%s %s in FUCKTOWN because %s.',
+        $content = sprintf('%s %s in FUCKTOWN because %s',
                            $fuckup['who'],
                            $fuckup['verb'],
                            $fuckup['fuckup']);
