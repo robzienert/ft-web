@@ -186,7 +186,7 @@ $app->get('/{page}', function ($page = 1) use ($app) {
 /**
  * Add a new fuckup to the site.
  */
-$app->post('/new', function () use ($app) {
+$app->post('/fuckup', function () use ($app) {
     $request = $app['request'];
 
     $verb = ($request->get('verb') == 'custom')
