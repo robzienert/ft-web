@@ -194,7 +194,8 @@ $app->post('/new', function () use ($app) {
     $entry = array(
         'who' => $app->escape($request->get('who')),
         'verb' => $app->escape($verb),
-        'fuckup' => $app->escape($request->get('fuckup'))
+        'fuckup' => $app->escape($request->get('fuckup')),
+        'date_created' => date('Y-m-d H:i:s')
     );
 
     if (!empty($entry['who']) && !empty($entry['fuckup'])) {
