@@ -156,7 +156,7 @@ $app->get('/feed', function () use ($app) {
         $entry->addAuthor('InFucktown');
         $entry->setContent($content);
         $entry->setDateCreated(strtotime($fuckup['date_created']));
-//        $entry->setLink('http://infucktown.com/fuckup/' . $fuckup['id']);
+        $entry->setLink('http://infucktown.com/fuckup/' . $fuckup['fuckup_id']);
 
         $feed->addEntry($entry);
     }
