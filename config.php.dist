@@ -2,3 +2,10 @@
 
 define('FT_TWITTER_KEY', '');
 define('FT_TWITTER_SECRET', '');
+
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'infucktown');
+define('DB_USER', '');
+define('DB_PASS', '');
+
+define('PAGINATION_COUNT', 10);

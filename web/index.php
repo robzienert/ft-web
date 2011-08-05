@@ -7,6 +7,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 defined('ROOT_PATH') || define('ROOT_PATH', realpath(__DIR__ . '/../'));
 defined('APP_ENV') || define('APP_ENV', (getenv('APP_ENV') ?: 'production'));
 
+require_once ROOT_PATH . '/config.php';
+
 // Cleanup after some Zend Server includes. Since I'm doing this, I'm probably
 // doing something wrong. I'd like to use ZF2, but the components are broked.
 if (false !== strpos('/zend/share/ZendFramework', get_include_path())) {
@@ -25,21 +27,25 @@ require_once ROOT_PATH . '/silex.phar';
  */
 $app = new Silex\Application();
 
+if ('development' == APP_ENV) {
+    $app['debug'] = true;
+}
+
+$app['autoloader']->registerNamespace('SilexExtension', ROOT_PATH . '/vendor/silex-extensions/src');
 $app->register(new Silex\Extension\TwigExtension(), array(
     'twig.path' => ROOT_PATH . '/views',
     'twig.class_path' => ROOT_PATH . '/vendor/twig/lib',
 ));
-
-$app['autoloader']->registerNamespace('SilexExtension', ROOT_PATH . '/vendor/silex-extensions/src');
-$app->register(new SilexExtension\PredisExtension(), array(
-    'predis.class_path' => ROOT_PATH . '/vendor/predis/lib',
-    'predis.server' => array(
-        'host' => '127.0.0.1',
-        'port' => 6379
+$app->register(new Silex\Extension\DoctrineExtension(), array(
+    'db.options' => array(
+        'driver' => 'pdo_mysql',
+        'dbname' => DB_NAME,
+        'host' => DB_HOST,
+        'user' => DB_USER,
+        'password' => DB_PASS
     ),
-    'predis.config' => array(
-        'prefix' => 'fucktown:'
-    )
+    'db.dbal.class_path' => ROOT_PATH . '/vendor/doctrine-dbal/lib',
+    'db.common.class_path' => ROOT_PATH . '/vendor/doctrine-common/lib'
 ));
 
 /**
@@ -60,8 +66,6 @@ $app->get('/view/{id}/retweet', function ($id) use ($app) {
     session_start();
 
     $fuckup = ft_find_fuckup($app, $id);
-
-    require ROOT_PATH . '/config.php';
 
     $config = array(
         'callbackUrl' => sprintf('http://%s/view/%d/retweet',
@@ -166,8 +170,6 @@ $app->get('/feed', function () use ($app) {
 $app->get('/{page}', function ($page = 1) use ($app) {
     $pages = ft_count_pages($app);
 
-    $paginate = (int) $pages - 1;
-
     return $app['twig']->render('index.twig', array(
         'fuckups' => ft_find_fuckups($app, $page),
         'message' => ft_get_flash_message($app['request']->query->get('msg')),
@@ -175,7 +177,7 @@ $app->get('/{page}', function ($page = 1) use ($app) {
             'pages' => $pages,
             'current' => $page,
         ),
-        'paginate' => $pages - 1
+        'paginate' => ($pages > 1)
     ));
 })->value('page', 1)->bind('home');
 
@@ -190,19 +192,13 @@ $app->post('/new', function () use ($app) {
         : $request->get('verb');
 
     $entry = array(
-        'time' => date(DateTime::RSS),
         'who' => $app->escape($request->get('who')),
         'verb' => $app->escape($verb),
         'fuckup' => $app->escape($request->get('fuckup'))
     );
 
     if (!empty($entry['who']) && !empty($entry['fuckup'])) {
-        $entryId = $app['predis']->incr('global:nextEntryId');
-
-        $app['predis']->set("fuckup:$entryId", json_encode($entry));
-
-        $app['predis']->lpush('global:fuckups', $entryId);
-        $app['predis']->ltrim('global:fuckups', 0, 1000);
+        $app['db']->insert('fuckups', $entry);
 
         $redirect = '/';
     } else {
@@ -222,7 +218,8 @@ if ('development' != APP_ENV) {
         }
 
         $code = ($e instanceof HttpException) ? $e->getStatusCode() : 500;
-        return new Response('We are sorry, but something went terribly wrong.', $code);
+        return new Response('<h2>I N F U C K C E P T I O N</h2>We are sorry, but
+            something went terribly wrong and now InFucktown is InFucktown.', $code);
     });
 }
 
@@ -241,16 +238,14 @@ $app->run();
 function ft_find_fuckups($app, $page = 1) {
     $fuckups = array();
 
-    $rangeStart = ($page - 1) * 10;
-    $rangeEnd = ($page * 10) - 1;
-
-    foreach ($app['predis']->lrange('global:fuckups', $rangeStart, $rangeEnd) as $fuckupId) {
-        $fuckup = $app['predis']->get("fuckup:$fuckupId");
-        $fuckup = json_decode($fuckup);
-        $fuckup->id = $fuckupId;
-
-        array_push($fuckups, $fuckup);
-    }
+    $rangeStart = ($page - 1) * PAGINATION_COUNT;
+    $rangeEnd = ($page * PAGINATION_COUNT) - 1;
+    
+    $fuckups = $app['db']->fetchAll(
+        "SELECT * FROM fuckups
+        ORDER BY date_created DESC
+        LIMIT $rangeStart, $rangeEnd
+        ");
 
     return $fuckups;
 }
@@ -263,14 +258,12 @@ function ft_find_fuckups($app, $page = 1) {
  */
 function ft_find_fuckup($app, $id)
 {
-    $fuckup = $app['predis']->get("fuckup:{$id}");
+    $sql = 'SELECT * FROM fuckups WHERE fuckup_id = ?';
+    $fuckup = $app['db']->fetchAssoc($sql, array($id));
 
     if (!$fuckup) {
         throw new NotFoundHttpException('Could not find fuckup ' . $id);
     }
-
-    $fuckup = json_decode($fuckup);
-    $fuckup->id = $id;
 
     return $fuckup;
 }
@@ -283,7 +276,7 @@ function ft_find_fuckup($app, $id)
  */
 function ft_count_fuckups($app)
 {
-    return $app['predis']->get('global:nextEntryId') - 1;
+    return (int) $app['db']->fetchColumn('SELECT COUNT(1) FROM fuckups');
 }
 
 /**
@@ -294,7 +287,7 @@ function ft_count_fuckups($app)
  */
 function ft_count_pages($app)
 {
-    return ceil(ft_count_fuckups($app) / 5);
+    return ceil(ft_count_fuckups($app) / PAGINATION_COUNT);
 }
 
 /**
