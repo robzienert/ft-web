@@ -106,9 +106,9 @@ $app->get('/view/{id}/retweet', function ($id) use ($app) {
     // @todo Add support for making the "who" twitter-linkable.
     $statusMessage = sprintf(
         '%s %s in #FUCKTOWN %s %s',
-        $fuckup->who,
-        $fuckup->verb,
-        $fuckup->fuckup,
+        $fuckup['who'],
+        $fuckup['verb'],
+        $fuckup['fuckup'],
         $tinyurl->shorten($thisPage));
 
     $token = unserialize($_SESSION['TWITTER_ACCESS_TOKEN']);
@@ -133,11 +133,13 @@ $app->get('/feed', function () use ($app) {
 
     require_once 'Zend/Feed/Writer/Feed.php';
 
+    $firstFuckup = current($fuckups);
+
     $feed = new Zend_Feed_Writer_Feed();
     $feed->setTitle('In FUCKTOWN');
     $feed->setDescription('Holy shit dude! A website to anonymously post other ' .
         'people&apos;s fuckups!');
-    $feed->setDateModified(strtotime(current($fuckups)->time));
+    $feed->setDateModified(strtotime($firstFuckup['date_created']));
 
     $host = 'http://' . $request->getHost();
     $feed->setLink($host);
@@ -145,15 +147,15 @@ $app->get('/feed', function () use ($app) {
 
     foreach ($fuckups as $fuckup) {
         $content = sprintf('%s %s in FUCKTOWN because %s.',
-                           $fuckup->who,
-                           $fuckup->verb,
-                           $fuckup->fuckup);
+                           $fuckup['who'],
+                           $fuckup['verb'],
+                           $fuckup['fuckup']);
 
         $entry = $feed->createEntry();
-        $entry->setTitle(sprintf('%s is in FUCKTOWN', $fuckup->who));
+        $entry->setTitle(sprintf('%s is in FUCKTOWN', $fuckup['who']));
         $entry->addAuthor('InFucktown');
         $entry->setContent($content);
-        $entry->setDateCreated(strtotime($fuckup->time));
+        $entry->setDateCreated(strtotime($fuckup['date_created']));
 //        $entry->setLink('http://infucktown.com/fuckup/' . $fuckup['id']);
 
         $feed->addEntry($entry);
