@@ -49,6 +49,131 @@ $app->register(new Silex\Extension\DoctrineExtension(), array(
 ));
 
 /**
+ * Models
+ */
+
+
+/**
+ * Get a list of fuckups.
+ *
+ * @todo Add auto-pruning of ids in the list that do not reference a fuckup.
+ *
+ * @param \Silex\Application $app
+ * @param int $page
+ * @return array
+ */
+function ft_find_fuckups($app, $page = 1)
+{
+    return ft_query_fuckups($app, 'date_created DESC', $page);
+}
+function ft_find_top_fuckups($app, $page = 1)
+{
+    return ft_query_fuckups($app, 'votes_up DESC');
+}
+function ft_find_best_fuckups($app, $page = 1)
+{
+    return ft_query_fuckups($app, 'votes_up DESC, votes_down ASC');
+}
+
+/**
+ * Base fuckups collection function.
+ *
+ * @param string $order
+ * @param int $page
+ * @return array
+ */
+function ft_query_fuckups($app, $order = null, $page = 1)
+{
+    $fuckups = array();
+
+    $rangeStart = ($page - 1) * PAGINATION_COUNT;
+    $rangeEnd = ($page * PAGINATION_COUNT) - 1;
+
+    if (null !== $order) {
+        $order = 'ORDER BY ' . $order;
+    }
+
+    $fuckups = $app['db']->fetchAll(
+        "SELECT * FROM fuckups
+        $order
+        LIMIT $rangeStart, $rangeEnd
+        ");
+
+    return $fuckups;
+}
+
+/**
+ * Find a single fuckup.
+ *
+ * @param \Silex\Application $app
+ * @param int $id
+ */
+function ft_find_fuckup($app, $id)
+{
+    $sql = 'SELECT * FROM fuckups WHERE fuckup_id = ?';
+    $fuckup = $app['db']->fetchAssoc($sql, array($id));
+
+    if (!$fuckup) {
+        throw new NotFoundHttpException('Could not find fuckup ' . $id);
+    }
+
+    return $fuckup;
+}
+
+/**
+ * Returns the total number of fuckups in the database.
+ *
+ * @param \Silex\Application $app
+ * @return int
+ */
+function ft_count_fuckups($app)
+{
+    return (int) $app['db']->fetchColumn('SELECT COUNT(1) FROM fuckups');
+}
+
+/**
+ * Returns the total number of pages of fuckups in the database.
+ *
+ * @param \Silex\Application $app
+ * @return int
+ */
+function ft_count_pages($app)
+{
+    return ceil(ft_count_fuckups($app) / PAGINATION_COUNT);
+}
+
+/**
+ * Get a fuckup flash message.
+ *
+ * @param string $key
+ * @return string
+ */
+function ft_get_flash_message($key)
+{
+    switch ($key) {
+        case 'invalidFuckup':
+            return 'You submitted an invalid fuckup. If you weren\'t already
+                posting about yourself, you may as well do so now.';
+
+        case 'retweet':
+            return 'You have just brought more shame to this fuckup by
+                retweeting it. Well done.';
+
+        case 'vote':
+            return 'Yes, yes... sort these fuckups for me.';
+
+        default:
+            return false;
+    }
+
+    return $message;
+}
+
+/**
+ * Controllers:
+ */
+
+/**
  * View an individual fuckup.
  */
 $app->get('/fuckup/{id}', function ($id) use ($app) {
@@ -334,119 +459,3 @@ if ('development' != APP_ENV) {
 
 // And finally run.
 $app->run();
-
-/**
- * Get a list of fuckups.
- *
- * @todo Add auto-pruning of ids in the list that do not reference a fuckup.
- *
- * @param \Silex\Application $app
- * @param int $page
- * @return array
- */
-function ft_find_fuckups($app, $page = 1)
-{
-    return ft_query_fuckups($app, 'date_created DESC', $page);
-}
-function ft_find_top_fuckups($app, $page = 1)
-{
-    return ft_query_fuckups($app, 'votes_up DESC');
-}
-function ft_find_best_fuckups($app, $page = 1)
-{
-    return ft_query_fuckups($app, 'votes_up DESC, votes_down ASC');
-}
-
-/**
- * Base fuckups collection function.
- *
- * @param string $order
- * @param int $page
- * @return array
- */
-function ft_query_fuckups($app, $order = null, $page = 1)
-{
-    $fuckups = array();
-
-    $rangeStart = ($page - 1) * PAGINATION_COUNT;
-    $rangeEnd = ($page * PAGINATION_COUNT) - 1;
-
-    if (null !== $order) {
-        $order = 'ORDER BY ' . $order;
-    }
-
-    $fuckups = $app['db']->fetchAll(
-        "SELECT * FROM fuckups
-        $order
-        LIMIT $rangeStart, $rangeEnd
-        ");
-
-    return $fuckups;
-}
-
-/**
- * Find a single fuckup.
- *
- * @param \Silex\Application $app
- * @param int $id
- */
-function ft_find_fuckup($app, $id)
-{
-    $sql = 'SELECT * FROM fuckups WHERE fuckup_id = ?';
-    $fuckup = $app['db']->fetchAssoc($sql, array($id));
-
-    if (!$fuckup) {
-        throw new NotFoundHttpException('Could not find fuckup ' . $id);
-    }
-
-    return $fuckup;
-}
-
-/**
- * Returns the total number of fuckups in the database.
- *
- * @param \Silex\Application $app
- * @return int
- */
-function ft_count_fuckups($app)
-{
-    return (int) $app['db']->fetchColumn('SELECT COUNT(1) FROM fuckups');
-}
-
-/**
- * Returns the total number of pages of fuckups in the database.
- *
- * @param \Silex\Application $app
- * @return int
- */
-function ft_count_pages($app)
-{
-    return ceil(ft_count_fuckups($app) / PAGINATION_COUNT);
-}
-
-/**
- * Get a fuckup flash message.
- *
- * @param string $key
- * @return string
- */
-function ft_get_flash_message($key)
-{
-    switch ($key) {
-        case 'invalidFuckup':
-            return 'You submitted an invalid fuckup. If you weren\'t already
-                posting about yourself, you may as well do so now.';
-
-        case 'retweet':
-            return 'You have just brought more shame to this fuckup by
-                retweeting it. Well done.';
-
-        case 'vote':
-            return 'Yes, yes... sort these fuckups for me.';
-
-        default:
-            return false;
-    }
-
-    return $message;
-}
