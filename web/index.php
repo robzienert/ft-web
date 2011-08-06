@@ -51,7 +51,7 @@ $app->register(new Silex\Extension\DoctrineExtension(), array(
 /**
  * View an individual fuckup.
  */
-$app->get('/view/{id}', function ($id) use ($app) {
+$app->get('/fuckup/{id}', function ($id) use ($app) {
     $fuckup = ft_find_fuckup($app, $id);
 
     return $app['twig']->render('view.twig', array(
@@ -62,7 +62,7 @@ $app->get('/view/{id}', function ($id) use ($app) {
 /**
  * LOLOL!!!1 Retweets a fuckup.
  */
-$app->get('/view/{id}/retweet', function ($id) use ($app) {
+$app->get('/fuckup/{id}/retweet', function ($id) use ($app) {
     session_start();
 
     $fuckup = ft_find_fuckup($app, $id);
