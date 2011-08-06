@@ -27,27 +27,25 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
 $(document).ready(function() {
-    $('#add a').click( function() {
-        $('#add_form').slideToggle();
-        return false;
-    });
+  $('#add a').click(function() {
+    $('#add_form').slideToggle();
+    return false;
+  });
 
-    $('#verb').change( function() {
-        if( $(this).val() == ($(this).children().length-1) ) {
-            $('#custom_verb').show();
-            $('#cancel_custom').show();
-            $(this).hide();
-        }
-    });
+  $('#verb').change(function() {
+    if ('custom' == $(this).val()) {
+      $('#custom_verb').show();
+      $('#cancel_custom').show();
+      $(this).hide();
+    }
+  });
 
-    $('#cancel_custom').click( function() {
-        $('#verb').show();
-        $('#verb').val(0)
-        $('#custom_verb').hide();
-        $('#custom_verb').val("");
-        $(this).hide();
-        return false;
-    });
+  $('#cancel_custom').click(function() {
+    $('#verb').show().val(0);
+    $('#custom_verb').hide().val('');
+    $(this).hide();
+    return false;
+  });
 });
 </script>
 <script type="text/javascript">
