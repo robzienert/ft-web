@@ -50,6 +50,7 @@ body {
 	color: #333;
 
 	background: url('/img/body_bg.png') repeat-x;
+  font-size: 1em;
 	font-family: Arial, Helvetica, sans-serif;
 	line-height: 200%;
 
@@ -59,6 +60,21 @@ h1 {
 	background: url('/img/header.png') no-repeat;
 	height: 246px;
 	text-indent: -9999px;
+}
+
+ul.navigation {
+  list-style: none;
+  margin-bottom: 20px;
+}
+
+ul.navigation li {
+  display: inline;
+  margin-right: 20px;
+}
+
+ul.navigation li.label {
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 #mast p {
@@ -136,9 +152,7 @@ h1 {
 }
 
 #verb_wrap {
-
 	float: left;
-
 }
 
 #verb_wrap strong{

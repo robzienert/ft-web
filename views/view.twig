@@ -6,7 +6,10 @@
     <p><span class="name"><span class="fucker">{{ fuckup.who }}</span>
         {{ fuckup.verb }} in FUCKTOWN</span>
         {{ fuckup.fuckup }}
-        <span class="meta">{{ fuckup.date_created|date("F jS \\a\\t g:ia") }} | <a href="/fuckup/{{ fuckup.fuckup_id }}/retweet" rel="nofollow">Retweet</a></span>
+        <span class="meta">{{ fuckup.date_created|date("F jS \\a\\t g:ia") }}
+          | <a href="/fuckup/{{ fuckup.fuckup_id }}/retweet" rel="nofollow">Retweet</a>
+          | <a href="/fuckup/{{ fuckup.fuckup_id }}/vote?v=up" rel="nofollow">Vote up</a>
+            <a href="/fuckup/{{ fuckup.fuckup_id }}/vote?v=down" rel="nofollow">Vote down</a></span>
     </p>
 </div>
 {% endblock %}

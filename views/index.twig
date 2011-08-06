@@ -1,63 +1,73 @@
 {% extends "layout.twig" %}
 
 {% block content %}
+<ul class="navigation">
+  <li class="label">Sort Options:</li>
+  <li><a href="/?sort=new" title="Sort by newest fuckups">New</a></li>
+  <li><a href="/?sort=best" title="Sort by the best fuckups">Best</a></li>
+  <li><a href="/?sort=top" title="Sort by the top fuckups">Top</a></li>
+</ul>
+
 <p id="add"><a href="#" title="Add a FUCKTOWNer">Add a FUCKTOWNER</a></p>
 
 <div id="add_form" style="display: none;">
-    <form action="/fuckup" method="post">
-        <fieldset>
-            <legend>Who's in FUCKTOWN?</legend>
-            <dl id="who_wrap">
-                <dt><label for="who">Who's in FUCKTOWN?</label></dt>
-                <dd><input type="text" name="who" id="who" value=""></dd>
-            </dl>
-            <dl id="verb_wrap">
-                <dt><label for="verb">Why are they here?</label></dt>
-                <dd><select name="verb" id="verb">
-                    <option value="is" label="is">is</option>
-                    <option value="could be" label="could be">could be</option>
-                    <option value="should be" label="should be">should be</option>
-                    <option value="wants to be" label="wants to be">wants to be</option>
-                    <option value="was" label="was">was</option>
-                    <option value="will be" label="will be">will be</option>
-                    <option value="would be" label="would be">would be</option>
-                    <option value="custom" label="custom...">custom...</option>
-                </select>
-                <input type="text" name="custom_verb" id="custom_verb" value=""> <strong>IN FUCKTOWN</strong>
-                <p><a id="cancel_custom" href="#">options</a></p></dd>
-            </dl>
-            <dl id="fuckup_wrap">
-                <dt><label for="fuckup">Why are they here?</label></dt>
-                <dd><textarea name="fuckup" id="fuckup" rows="24" cols="80"></textarea></dd>
-            </dl>
+  <form action="/fuckup" method="post">
+    <fieldset>
+      <legend>Who's in FUCKTOWN?</legend>
+      <dl id="who_wrap">
+        <dt><label for="who">Who's in FUCKTOWN?</label></dt>
+        <dd><input type="text" name="who" id="who" value=""></dd>
+      </dl>
+      <dl id="verb_wrap">
+        <dt><label for="verb">Why are they here?</label></dt>
+        <dd><select name="verb" id="verb">
+            <option value="is" label="is">is</option>
+            <option value="could be" label="could be">could be</option>
+            <option value="should be" label="should be">should be</option>
+            <option value="wants to be" label="wants to be">wants to be</option>
+            <option value="was" label="was">was</option>
+            <option value="will be" label="will be">will be</option>
+            <option value="would be" label="would be">would be</option>
+            <option value="custom" label="custom...">custom...</option>
+          </select>
+          <input type="text" name="custom_verb" id="custom_verb" value=""> <strong>IN FUCKTOWN</strong>
+          <p><a id="cancel_custom" href="#">options</a></p></dd>
+      </dl>
+      <dl id="fuckup_wrap">
+        <dt><label for="fuckup">Why are they here?</label></dt>
+        <dd><textarea name="fuckup" id="fuckup" rows="24" cols="80"></textarea></dd>
+      </dl>
 
-            <dl class="form_controls">
-                <dt><label for="submit">Submit</label></dt>
-                <dd><input type="submit" name="submit" id="submit" value="submit"></dd>
-            </dl>
-        </fieldset>
-    </form>
+      <dl class="form_controls">
+        <dt><label for="submit">Submit</label></dt>
+        <dd><input type="submit" name="submit" id="submit" value="submit"></dd>
+      </dl>
+    </fieldset>
+  </form>
 </div>
 <div id="fuckups">
-    {% for fuckup in fuckups %}
+  {% for fuckup in fuckups %}
     <p><a class="fuckup" href="/fuckup/{{ fuckup.fuckup_id }}"><span class="name"><span class="fucker">{{ fuckup.who }}</span>
-        {{ fuckup.verb }} in FUCKTOWN</span>
-        {{ fuckup.fuckup }}</a>
-        <span class="meta">{{ fuckup.date_created|date("F jS \\a\\t g:ia") }} | <a href="/fuckup/{{ fuckup.fuckup_id }}/retweet" rel="nofollow">Retweet</a></span>
+      {{ fuckup.verb }} in FUCKTOWN</span>
+      {{ fuckup.fuckup }}</a>
+      <span class="meta">{{ fuckup.date_created|date("F jS \\a\\t g:ia") }}
+        | <a href="/fuckup/{{ fuckup.fuckup_id }}/retweet" rel="nofollow">Retweet</a>
+        | Vote <a href="/fuckup/{{ fuckup.fuckup_id }}/vote/up" rel="nofollow">up</a>
+        <a href="/fuckup/{{ fuckup.fuckup_id }}/vote/down" rel="nofollow">down</a></span>
     </p>
-    {% else %}
+  {% else %}
     <p>Ahh... we're in fucktown. No fuckups found!</p>
-    {% endfor %}
+  {% endfor %}
 </div>
 {% if paginate %}
-<ul class="pagination">
-    {% for page in 1..pagination.pages %}
-        {% if pagination.current == page %}
-        <li>{{ page }}</li>
-        {% else %}
-        <li><a href="/{{ page }}">{{ page }}</a></li>
-        {% endif %}
-    {% endfor %}
-</ul>
+  <ul class="pagination">
+  {% for page in 1..pagination.pages %}
+    {% if pagination.current == page %}
+      <li>{{ page }}</li>
+    {% else %}
+      <li><a href="/{{ page }}{{ pagination.sort }}">{{ page }}</a></li>
+    {% endif %}
+  {% endfor %}
+  </ul>
 {% endif %}
 {% endblock %}
